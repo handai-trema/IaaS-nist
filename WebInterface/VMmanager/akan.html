@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>VM Management</title>
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="./socket.io/socket.io.js"></script>	</head>
+	<body>
+                <button id="create">Create</button>
+<script>
+var socket = io.connect();
+$("#create").click(function(){
+  socket.emit('create','ikeee');
+});
+</script>
+        </body>
+</html>

@@ -9,16 +9,19 @@ license: MIT
 author: bootply.com
 */
 
+/*
 @import url(http://fonts.googleapis.com/css?family=Droid+Sans+Mono);
+*/
 
 html,body {
   height: 100%;
-  font-family: 'Droid Sans Mono', sans-serif;
+  font-family: sans-serif;
 }
 
 p,h1,h2,h3,h4 {
-  font-family: 'Droid Sans Mono', sans-serif;
+  font-family: sans-serif;
 }
+
 
 hr {
   border-color:#191919;
@@ -49,7 +52,7 @@ footer > .container {
 }
 
 body {
-  padding-top: 51px; 
+  padding-top: 51px;
   background: #1E1E1E;
   color: #f9f9f9;
 }

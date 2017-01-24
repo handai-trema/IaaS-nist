@@ -95,15 +95,6 @@
             </div><!--/col-->
             
             <div class="col-sm-6">
-                 <div class="well"> 
-                     <form class="form">
-                      <h4>Sign-up</h4>
-                      <div class="input-group text-center">
-                      <input type="text" class="form-control input-lg" title="Don't worry. We hate spam, and will not share your email with anyone." placeholder="Enter your email address">
-                        <span class="input-group-btn"><button class="btn btn-lg btn-primary" type="button">OK</button></span>
-                      </div>
-                    </form>
-                 </div><!--/well-->
         
                  <div class="panel panel-default">
                    <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>People You May Know</h4></div>
@@ -151,18 +142,14 @@
           </div><!--/row-->
 
           <h1 id="create">Create your VM</h1>
+今すぐ Virtual Machine を利用してみよう！
+          <div class="input-group text-center">
+          <form class="form">
+          <input type="text" id="VMname" class="form-control input-lg" placeholder="VM name">
+          <span class="input-group-btn"><button id="createButton" class="btn btn-lg btn-primary" type="button">Create</button></span>
+          </form>
+          </div>
 
-          <div class="panel panel-default">
-          	<div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>Newest Items</h4></div>
-   			<div class="panel-body">
-              <div class="list-group">
-                <a href="#" class="list-group-item active">Active item</a>
-                <a href="#" class="list-group-item">Second item</a>
-                <a href="#" class="list-group-item">Third item</a>
-              </div>
-            </div>
-          </div><!--/panel-->
-          
           <h1 id="section1">Section 1</h1>
   
           <div class="panel panel-default">
@@ -176,147 +163,22 @@
             </div>
           </div><!--/panel-->
           
-          <p>Vestibulum porttitor massa eget pellentesque eleifend. Suspendisse tempor, nisi eu placerat auctor, 
-            est erat tempus neque, pellentesque venenatis eros lorem vel quam. Nulla luctus malesuada porttitor. 
-            Fusce risus mi, luctus scelerisque hendrerit feugiat, volutpat gravida nisi. Quisque facilisis risus 
-            in lacus sagittis malesuada. Suspendisse non purus diam. Nunc commodo felis sit amet tortor 
+          <p>
             adipiscing varius. Fusce commodo nulla quis fermentum hendrerit. Donec vulputate, tellus sed 
             venenatis sodales, purus nibh ullamcorper quam, sit amet tristique justo velit molestie lorem.</p>
     
           <h1 id="section2">Section 2</h1>
-          <p>Fusce sollicitudin lacus lacinia mi tincidunt ullamcorper. Aenean velit ipsum, vestibulum nec 
-            tincidunt eu, lobortis vitae erat. Nullam ultricies fringilla ultricies. Sed euismod nibh quis 
-            tincidunt dapibus. Nulla quam velit, porta sit amet felis eu, auctor fringilla elit. Donec 
-            convallis tincidunt nibh, quis pellentesque sapien condimentum a. Phasellus purus dui, rhoncus 
-            id suscipit id, ornare et sem. Duis aliquet posuere arcu a ornare. Pellentesque consequat libero 
-            id massa accumsan volutpat. Fusce a hendrerit lacus. Nam elementum ac eros eu porttitor. 
-            Phasellus enim mi, auctor sit amet luctus a, commodo fermentum arcu. In volutpat scelerisque 
+          <p> 
+            
             quam, nec lacinia libero.
           </p>
           <hr>
           <button class="btn btn-primary">View</button> <button class="btn btn-primary">Download</button>
           
           <h1 id="section3">Section 3</h1>
-          <p>Aliquam a lacinia orci, iaculis porttitor neque. Nullam cursus dolor tempus mauris posuere, eu 
-            scelerisque sem tincidunt. Praesent blandit sapien at sem pulvinar, vel egestas orci varius. 
-            Praesent vitae purus at ante aliquet luctus vel quis nibh. Mauris id nulla vitae est lacinia 
-            rhoncus a vel justo. Donec iaculis quis sapien vel molestie. Aliquam sed elementum orci. 
-            Vestibulum tristique tempor risus et malesuada. Sed eget ligula sed quam placerat dapibus. 
-            Integer accumsan ac massa at tempus.</p>
+          <p>umsan ac massa at s.</p>
          
-          <hr>
-  
-          <h1 id="section3">Elements</h1>
-          <div class="row">
-              <div class="col-md-12">
-                <div class="alert alert-info alert-dismissable">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    <strong>Heads up!</strong> This alert needs your attention, but it's not super important.
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="panel panel-default">
-                   <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>Buttons &amp; Labels</h4></div>
-                    <div class="panel-body">
-                      <div class="row">
-                        <div class="col-xs-4"><a class="btn btn-default center-block" href="#">Button</a></div>
-                        <div class="col-xs-4"><a class="btn btn-primary center-block" href="#">Primary</a></div>
-                        <div class="col-xs-4"><a class="btn btn-danger center-block" href="#">Danger</a></div>
-                      </div>
-                      <br>
-                      <div class="row">
-                        <div class="col-xs-4"><a class="btn btn-warning center-block" href="#">Warning</a></div>
-                        <div class="col-xs-4"><a class="btn btn-info center-block" href="#">Info</a></div>
-                        <div class="col-xs-4"><a class="btn btn-success center-block" href="#">Success</a></div>
-                      </div>
-                      <hr>
-                      <div class="btn-group btn-group-sm"><button class="btn btn-default">1</button><button class="btn btn-default">2</button><button class="btn btn-default">3</button></div>              
-                      <hr>
-                      <div class="row">
-                        <div class="col-md-4">
-                          <span class="label label-default">Label</span>
-                          <span class="label label-success">Success</span>
-                        </div>
-                        <div class="col-md-4">
-                          <span class="label label-warning">Warning</span>  
-                          <span class="label label-info">Info</span>
-                        </div>
-                        <div class="col-md-4">
-                          <span class="label label-danger">Danger</span>
-                          <span class="label label-primary">Primary</span>
-                        </div>
-                      </div><!--/row-->
-                    </div><!--/panel-body-->
-               </div><!--/panel-->
-           </div><!--/col-6-->
-            
-           <div class="col-sm-6">
-              <div class="panel panel-default">
-                 <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>Progress Bars</h4></div>
-                  <div class="panel-body">
-                    
-                    <div class="progress">
-                      <div class="progress-bar progress-bar-info" style="width: 20%"></div>
-                    </div>
-                    <div class="progress">
-                      <div class="progress-bar progress-bar-success" style="width: 40%"></div>
-                    </div>
-                    <div class="progress">
-                      <div class="progress-bar progress-bar-warning" style="width: 80%"></div>
-                    </div>
-                    <div class="progress">
-                      <div class="progress-bar progress-bar-danger" style="width: 50%"></div>
-                    </div>
-                    
-                  </div><!--/panel-body-->
-              </div><!--/panel-->
-          </div><!--/col-6-->
-            
-          <div class="col-sm-6">
-              <div class="panel panel-default">
-                 <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>Tabs</h4></div>
-                  <div class="panel-body">
-      
-                      <ul class="nav nav-tabs">
-                        <li class="active"><a href="#A" data-toggle="tab">Section 1</a></li>
-                        <li><a href="#B" data-toggle="tab">Section 2</a></li>
-                        <li><a href="#C" data-toggle="tab">Section 3</a></li>
-                      </ul>
-                      <div class="tabbable">
-                        <div class="tab-content">
-                          <div class="tab-pane active" id="A">
-                            <div class="well well-sm">I'm in Section A.</div>
-                          </div>
-                          <div class="tab-pane" id="B">
-                            <div class="well well-sm">Howdy, I'm in Section B.</div>
-                          </div>
-                          <div class="tab-pane" id="C">
-                            <div class="well well-sm">I've decided that I like wells.</div>
-                          </div>
-                        </div>
-                      </div> <!-- /tabbable -->
-                    
-                      <div class="col-sm-12 text-center">
-                        <ul class="pagination center-block" style="display:inline-block;">
-                          <li><a href="#">«</a></li>
-                          <li><a href="#">1</a></li>
-                          <li><a href="#">2</a></li>
-                          <li><a href="#">3</a></li>
-                          <li><a href="#">4</a></li>
-                          <li><a href="#">5</a></li>
-                          <li><a href="#">»</a></li>
-                        </ul>
-                      </div>
-                    
-                  </div><!--/panel-body-->
-               </div> <!--/panel-->
-            </div><!--/col-6-->
           
-          	<div class="clearfix"></div>
-          
-          	<hr>
-          	<h4><a href="http://www.bootply.com/ToV8Bzv4GQ">Holo Theme from Bootply</a></h4>
-          	<hr>
           
         </div><!--/.col-xs-12-->
       </div><!--/.row-->
@@ -358,8 +220,18 @@
 </footer>
         
 	<!-- script references -->
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+		<script src="js/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/scripts.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script>
+var socket = io.connect();
+$("#createButton").click(function(){
+  var vmName = $("VMname").val();
+  alert(vmName);
+  socket.emit('create', vmName);
+});
+</script>
+
 	</body>
 </html>

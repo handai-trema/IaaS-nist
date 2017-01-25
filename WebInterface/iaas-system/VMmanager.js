@@ -51,7 +51,7 @@ io.sockets.on('connection', function(socket) {
       console.log(stdout);
     });
   });
-  socket.on('remove', function(data) {
+  socket.on('delete', function(data) {
     console.log(data);
     exec('sh stop.sh '+data, (err, stdout, stderr) => {
       if (err) { console.log(err); }

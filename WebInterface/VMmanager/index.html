@@ -223,7 +223,7 @@ $("#deleteButton").click(function(){
   var vmName = window.prompt("削除する VM の名前を入力してください。","");
   if(vmNames.indexOf(vmName) >= 0) {
     alert('Virtual Machine "'+vmName+'" が削除されました。');
-//    socket.emit('delete', vmName);
+    socket.emit('delete', vmName);
     var vmList = document.getElementById('vmList');
     var vm = document.getElementById('vm-list-'+vmName);
     // 1 個ずつ active をずらす

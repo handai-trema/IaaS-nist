@@ -46,9 +46,16 @@ io.sockets.on('connection', function(socket) {
   console.log("connected.");
   socket.on('create', function(data) {
     console.log(data);
-//    exec('ls', (err, stdout, stderr) => {
-//      if (err) { console.log(err); }
-//      console.log(stdout);
-//    });
+    exec('sh create.sh '+data, (err, stdout, stderr) => {
+      if (err) { console.log(err); }
+      console.log(stdout);
+    });
+  });
+  socket.on('remove', function(data) {
+    console.log(data);
+    exec('sh stop.sh '+data, (err, stdout, stderr) => {
+      if (err) { console.log(err); }
+      console.log(stdout);
+    });
   });
 });

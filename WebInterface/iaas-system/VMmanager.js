@@ -28,6 +28,11 @@ var server = http.createServer(function (req, res) {
       res.write(data);
       res.end();
     });
+  } else if(url.match(/.jpg/)) {
+    fs.readFile('../VMmanager'+url, function(err, data) {
+      res.writeHead(200, {'Content-Type': 'image/jpeg'});
+      res.end(data);
+    });
   } else {
     res.end();
   }
@@ -41,9 +46,16 @@ io.sockets.on('connection', function(socket) {
   console.log("connected.");
   socket.on('create', function(data) {
     console.log(data);
-//    exec('ls', (err, stdout, stderr) => {
-//      if (err) { console.log(err); }
-//      console.log(stdout);
-//    });
+    exec('sh create.sh '+data, (err, stdout, stderr) => {
+      if (err) { console.log(err); }
+      console.log(stdout);
+    });
+  });
+  socket.on('remove', function(data) {
+    console.log(data);
+    exec('sh stop.sh '+data, (err, stdout, stderr) => {
+      if (err) { console.log(err); }
+      console.log(stdout);
+    });
   });
 });

@@ -12,13 +12,14 @@ class TopologyController < Trema::Controller
     @command_line = CommandLine.new(logger)
     @topology = Topology.new
     block.call self
+    @arp_table = Hash.new
   end
 
   def start(args = [])
     @command_line.parse(args)
     @topology.add_observer @command_line.view
     logger.info "#{@command_line.view}"
-    logger.info "Topology started (#{@command_line.view})."
+    logger.info "TopologyXX started (#{@command_line.view})."
     self
   end
 
@@ -58,6 +59,28 @@ class TopologyController < Trema::Controller
                                packet_in.source_ip_address,
                                dpid,
                                packet_in.in_port)
+      unless @arp_table.include?(packet_in.source_ip_address) then
+        arp_table[packet_in.source_ip_address] = packet_in.source_mac
+      end
+      case packet_in.data
+      when Arp::Request
+        puts "Arp Request process"
+        if @arp_table.include?(packet_in.source_ip_address) then
+          arp_request = packet_in.data
+          send_packet_out(
+            dpid,
+            raw_data: Arp::Reply.new(
+              destination_mac: arp_request.source_mac,
+              source_mac:@arp_table[packet_in.source_ip_address],
+              sender_protocol_address: arp_request.target_protocol_address,
+              target_protocol_address: arp_request.sender_protocol_address
+            ).to_binary,
+            actions: SendOutPort.new(packet_in.in_port)
+          )
+          puts "ARP reply created!!"
+        end
+      else
+      end
     elsif packet_in.data.is_a? Parser::IPv4Packet
       if packet_in.source_ip_address.to_s != "0.0.0.0"
         @topology.maybe_add_host(packet_in.source_mac,

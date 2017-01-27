@@ -38,24 +38,24 @@ class Slice
     #for each new slice
     split_to_name.zip(hosts_mac_addrs, is_added).each do |slice_name, mac_addrs, is_a|
       tmp_slice = create(slice_name)
-      if mac_addrs
-        mac_addrs.each do |mac_addr|
-          macs.zip(ports).each do |each, port|
-            each.each do |mac|
-              if mac == mac_addr
-                #only add port when the slice includes the host with the port
-                if is_a && !is_a[port]
-                  tmp_slice.add_port(port)
-                  is_a[port] = true
-                end
-                tmp_slice.add_mac_address(mac_addr, port)
-              end
+      next unless mac_addrs
+      mac_addrs.each do |mac_addr|
+        macs.zip(ports).each do |each, port|
+          each.each do |mac|
+            next unless mac == mac_addr
+            #only add port when the slice includes the host with the port
+            if is_a && !is_a[port]
+              tmp_slice.add_port(port)
+              is_a[port] = true
             end
+            tmp_slice.add_mac_address(mac_addr, port)
+            base_slice.delete_mac_address(mac_addr,port)
+            base_slice.delete_port(port)
           end
         end
       end
     end
-    destroy(base_slice.name)
+    destroy(base_slice.name) if base_slice.ports.length.zero?
     puts "split #{base} into #{into[0].split(":")[0]} and #{into[1].split(":")[0]}"
     write_slice_info
   end
@@ -109,17 +109,20 @@ class Slice
     all.clear
   end
 
+
   def self.write_slice_info
     color_list = ["red","green","yellow","blue","cyan","magenda","orange","pink"]
     idx = 0
-    outtext = Array.new
+    outtext = ""
     all.each do |slice|
-      slice.ports.each do |mac|
-        outtext.push(sprintf("nodes.push({id: %d, label: '%#x', font: {size:15, color:'%s', face:'sans'}, image:DIR+'switch.jpg', shape: 'image'});", mac.to_i, mac.to_hex, color_list[idx]))
+      slice.ports.each do |port|
+	slice.mac_addresses(port).each do |mac|
+          outtext += sprintf("nodes.push({id: %d, label: '%s', font: {size:15, color:'%s', face:'sans'}, image:DIR+'host.png', shape: 'image'});", mac.to_i, mac.to_s, color_list[idx])
+	end
       end
       idx += 1
     end
-    
+
     File.open("./output/slice.js","w") do |out|
       out.write(outtext)
     end
@@ -127,10 +130,10 @@ class Slice
 
   attr_reader :name
 
-  def initialize(name,color)
+  def initialize(name)
     @name = name
     @ports = Hash.new([].freeze)
-    @color = color
+    #@color = color
   end
   private_class_method :new
 
@@ -140,6 +143,8 @@ class Slice
       fail PortAlreadyExistsError, "Port #{port.name} already exists"
     end
     @ports[port] = [].freeze
+    puts("add port")
+    p @ports
   end
 
   def delete_port(port_attrs)
@@ -172,7 +177,7 @@ class Slice
            "MAC address #{mac_address} already exists")
     end
     @ports[port] += [Pio::Mac.new(mac_address)]
-    write_slice_info
+    Slice.write_slice_info
   end
 
   def delete_mac_address(mac_address, port_attrs)
@@ -183,7 +188,7 @@ class Slice
       each.endpoints.include? [Pio::Mac.new(mac_address),
                                Topology::Port.create(port_attrs)]
     end.each(&:destroy)
-    write_slice_info
+    Slice.write_slice_info
   end
 
   def find_mac_address(port_attrs, mac_address)

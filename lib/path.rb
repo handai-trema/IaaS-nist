@@ -7,6 +7,7 @@ class Path < Trema::Controller
   cattr_accessor(:all, instance_reader: false) { [] }
 
   def self.create(shortest_path, packet_in)
+    #puts "path create"
     new.save(shortest_path, packet_in).tap { |new_path| all << new_path }
   end
 
@@ -63,11 +64,14 @@ class Path < Trema::Controller
     path[1..-2].each_slice(2).to_a
   end
 
+=begin
   def flow_mod_add_to_each_switch
     path.each_slice(2) do |in_port, out_port|
       send_flow_mod_add(out_port.dpid,
                         match: exact_match(in_port.number),
                         actions: SendOutPort.new(out_port.number))
+      puts "send FlowStatsRequest"
+      send_message out_port.dpid, Pio::FlowStats::Request.new(:match => Match.new())
     end
   end
 
@@ -79,13 +83,66 @@ class Path < Trema::Controller
     end
   end
 
-  def exact_match(_in_port)
-    #ExactMatch.new(@packet_in).tap { |match| match.in_port = in_port }
-    Match.new({
-      destination_ip_address: @packet_in.destination_ip_address,
-      ether_type: 0x0800,
-    })
+  def exact_match(in_port)
+    ExactMatch.new(@packet_in).tap { |match| match.in_port = in_port }
+    #Match.new({
+      #destination_ip_address: @packet_in.destination_ip_address,
+      #ether_type: 0x0800,
+    #})
   end
+=end
+
+  def flow_mod_add_to_each_switch
+    path.each_slice(2) do |in_port, out_port|
+      ether_types = [0x0800, 0x0806]
+      ether_types.each do |ether_type|
+        match = exact_match(in_port.number, ether_type)
+        if match != nil then
+          send_flow_mod_add(out_port.dpid,
+                            match: match,
+                            actions: SendOutPort.new(out_port.number))
+          puts "send FlowStatsRequest"
+          send_message out_port.dpid, Pio::FlowStats::Request.new(:match => Match.new())
+        end
+      end
+    end
+  end
+
+  def flow_mod_delete_to_each_switch
+    puts "#{path}"
+    path.each_slice(2) do |in_port, out_port|
+      ether_types = [0x0800, 0x0806]
+      ether_types.each do |ether_type|
+        send_flow_mod_delete(out_port.dpid,
+                             match: exact_match(in_port.number, ether_type),
+                             out_port: out_port.number)
+      end
+    end
+  end
+
+  def send_message_flowstatsrequest 
+      puts "send FlowStatsRequest"
+      send_message 0x4, Pio::FlowStats::Request.new(:match => Match.new())
+  end
+
+  def exact_match(_in_port, _ether_type)
+    #ExactMatch.new(@packet_in).tap { |match| match.in_port = in_port }
+    ip_address = nil
+    if @packet_in.data.is_a? Parser::IPv4Packet then
+      ip_address = @packet_in.destination_ip_address
+    elsif @packet_in.data.is_a? Arp then
+      ip_address = @packet_in.target_protocol_address
+    end
+
+    if ip_address != nil then
+      return Match.new({
+        destination_ip_address: ip_address,
+        ether_type: _ether_type,
+      })
+    end
+    return nil
+  end
+
 
   def path
     @full_path[1..-2]

@@ -47,6 +47,7 @@ class RestApi < Grape::API
     requires :name, type: String, desc: 'Slice ID.'
   end
   post :slices do
+    puts("create")
     rest_api { Slice.create params[:name] }
   end
 
@@ -55,11 +56,13 @@ class RestApi < Grape::API
     requires :name, type: String, desc: 'Slice ID.'
   end
   delete :slices do
+    puts("delete")
     rest_api { Slice.destroy params[:name] }
   end
 
   desc 'Lists slices.'
   get :slices do
+    puts("show")
     rest_api { Slice.all }
   end
 
@@ -173,11 +176,10 @@ class RestApi < Grape::API
     requires :base_slice_id, type: String, desc: 'Base slice.'
     requires :into_slices_id, type: String, desc: 'Into slices(multiple).'
   end
-  intoAry = params[:into].split(",")
   get 'base_slice_id/:base_slice_id/into_slices_id/:into_slices_id' do
     rest_api do
-      Slice.find_by!(name: params[:slice_id]).
-        split(params[:base_slice_id], intoAry)
+      arr = params[:into_slices_id].split(",")
+      Slice.split(params[:base_slice_id], arr[0],arr[1])
     end
   end
 
@@ -186,11 +188,11 @@ class RestApi < Grape::API
     requires :base_slices_id, type: String, desc: 'Base slices(multiple).'
     requires :into_slice_id, type: String, desc: 'Into slice.'
   end
-  baseAry = params[:base].split(",")
   get 'base_slices_id/:base_slices_id/into_slice_id/:into_slice_id' do
     rest_api do
-      Slice.find_by!(name: params[:slice_id]).
-        join(baseAry, params[:into_slice_id])
+      #p params[:into_slice_id]
+      #p Slice.find_by!(name: params[:into_slice_id])
+      Slice.join(params[:base_slices_id].split(","), params[:into_slice_id])
     end
   end
 end

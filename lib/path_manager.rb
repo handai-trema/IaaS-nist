@@ -4,6 +4,7 @@ require 'trema'
 
 # L2 routing path manager
 class PathManager < Trema::Controller
+
   def start
     @graph = Graph.new
     logger.info 'Path Manager started.'
@@ -33,12 +34,13 @@ class PathManager < Trema::Controller
     @graph.add_link port_a, port_b
   end
 
+
   def delete_link(port_a, port_b, _topology)
     @graph.delete_link port_a, port_b
     Path.find { |each| each.link?(port_a, port_b) }.each(&:destroy)
   end
-
   def add_host(mac_address, port, _topology)
+    puts "--add_host:" + mac_address + "--"
     @graph.add_link mac_address, port
   end
 

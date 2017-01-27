@@ -9,7 +9,7 @@ module View
       delete_jsfile()
     end
     def delete_jsfile()
-      File.delete "./output/path.js"
+      File.delete "./output/path.js" if File.exist?("./output/path.js")
       fhtml = open("./output/path.js", "w")
       fhtml.write("paths = [];\n")
     end
@@ -30,7 +30,7 @@ module View
         outtext.push(sprintf("edges.push({from: %d, to: %d});", each[0].to_i, each[2].to_i))#add link between host and switch(each[2]:switch dpid)
       end
       @topology = outtext
-      File.delete "./output/" + @output
+      File.delete "./output/" + @output if File.exist?("./output/" + @output)
       fhtml = open("./output/" + @output, "w")
       fhtml.write(ERB.new(File.open('./output/template/topology_template.js').read).result(binding))
     end

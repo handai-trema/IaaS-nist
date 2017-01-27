@@ -1,3 +1,4 @@
+
 require 'command_line'
 require 'topology'
 
@@ -11,6 +12,7 @@ class TopologyController < Trema::Controller
     super
     @command_line = CommandLine.new(logger)
     @topology = Topology.new
+    @arp_table = Hash.new
     block.call self
   end
 
@@ -18,7 +20,7 @@ class TopologyController < Trema::Controller
     @command_line.parse(args)
     @topology.add_observer @command_line.view
     logger.info "#{@command_line.view}"
-    logger.info "Topology started (#{@command_line.view})."
+    logger.info "Topology started! (#{@command_line.view})."
     self
   end
 
@@ -54,18 +56,90 @@ class TopologyController < Trema::Controller
     if packet_in.lldp?
       @topology.maybe_add_link Link.new(dpid, packet_in)
     elsif packet_in.data.is_a? Arp
+      puts "ARP packet in"
+      puts packet_in.source_mac
       @topology.maybe_add_host(packet_in.source_mac,
-                               packet_in.source_ip_address,
+                               packet_in.sender_protocol_address,
                                dpid,
                                packet_in.in_port)
+    elsif packet_in.data.is_a? Pio::Arp::Request
+      arp_request = packet_in.data
+      unless @arp_table.include?(arp_request.sender_protocol_address.to_s) then
+        @arp_table.store(arp_request.sender_protocol_address.to_s,packet_in.source_mac)
+        puts "ARP Table is added!!"
+        puts @arp_table
+      end
+      if @arp_table.include?(arp_request.target_protocol_address.to_s) then
+        send_packet_out(
+          dpid,
+          raw_data: Arp::Reply.new(
+            destination_mac: arp_request.source_mac,
+            source_mac:@arp_table[arp_request.target_protocol_address.to_s],
+            sender_protocol_address: arp_request.target_protocol_address,
+            target_protocol_address: arp_request.sender_protocol_address
+          ).to_binary,
+          actions: SendOutPort.new(packet_in.in_port)
+        )
+        puts "ARP reply created!!"
+      else
+        @topology.ports.each do |dpid,ports|
+          ports.each do |port|
+            flag = false
+            @topology.links.each do |link|
+              if (link.dpid_a == dpid && link.port_a == port.port_no) || (link.dpid_b == dpid && link.port_b == port.port_no) then
+                flag = true
+                break
+              end
+            end
+            if !flag then
+              #puts "dpid=#{dpid},port=#{port.port_no}"
+              send_packet_out(
+                dpid,
+                raw_data: packet_in.raw_data,
+                actions: SendOutPort.new(port.port_no)
+              )
+            end
+          end
+        end
+      end
+    elsif packet_in.data.is_a? Pio::Arp::Reply
+      arp_reply = packet_in.data
+      unless @arp_table.include?(arp_reply.sender_protocol_address.to_s) then
+        @arp_table.store(arp_reply.sender_protocol_address.to_s,packet_in.source_mac)
+        puts "ARP Table is added!!"
+        puts @arp_table
+      end
+        @topology.ports.each do |dpid,ports|
+          ports.each do |port|
+            flag = false
+            @topology.links.each do |link|
+              if (link.dpid_a == dpid && link.port_a == port.port_no) || (link.dpid_b == dpid && link.port_b == port.port_no) then
+                flag = true
+                break
+              end
+            end
+            if !flag then
+              #puts "dpid=#{dpid},port=#{port.port_no}"
+              send_packet_out(
+                dpid,
+                raw_data: packet_in.raw_data,
+                actions: SendOutPort.new(port.port_no)
+              )
+            end
+          end
+        end
     elsif packet_in.data.is_a? Parser::IPv4Packet
       if packet_in.source_ip_address.to_s != "0.0.0.0"
-        @topology.maybe_add_host(packet_in.source_mac,
-                                 packet_in.source_ip_address,
-                                 dpid,
-                                 packet_in.in_port)
+        #unless packet_in.source_ip_address.to_a[3] > 100 then
+          @topology.maybe_add_host(packet_in.source_mac,
+                                   packet_in.source_ip_address,
+                                   dpid,
+                                   packet_in.in_port)
+          #puts "host is registered by Parser::IPv4Packet"
+        #end
       end
     else
+      #puts packet_in.data.class
       p packet_in.ether_type.to_hex
     end
   end

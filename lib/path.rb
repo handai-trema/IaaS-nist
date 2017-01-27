@@ -101,11 +101,12 @@ class Path < Trema::Controller
           send_flow_mod_add(out_port.dpid,
                             match: match,
                             actions: SendOutPort.new(out_port.number))
-          puts "send FlowStatsRequest"
-          send_message out_port.dpid, Pio::FlowStats::Request.new(:match => Match.new())
         end
       end
     end
+    #puts "send FlowStatsRequest #{path.last.dpid.to_hex}"
+    #send_message path.last.dpid, Pio::FlowStats::Request.new(:match => Match.new())
+
   end
 
   def flow_mod_delete_to_each_switch
@@ -120,9 +121,9 @@ class Path < Trema::Controller
     end
   end
 
-  def send_message_flowstatsrequest 
+  def send_message_flowstatsrequest
       puts "send FlowStatsRequest"
-      send_message 0x4, Pio::FlowStats::Request.new(:match => Match.new())
+      send_message 0x5, Pio::FlowStats::Request.new(:match => Match.new())
   end
 
   def exact_match(_in_port, _ether_type)

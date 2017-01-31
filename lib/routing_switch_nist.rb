@@ -46,19 +46,25 @@ class RoutingSwitch < Trema::Controller
   delegate :port_modify, to: :@topology
 
   def packet_in(dpid, packet_in)
+    @dpid4 = 0x4
     @topology.packet_in(dpid, packet_in)
     @path_manager.packet_in(dpid, packet_in) unless packet_in.lldp?
 =begin
+    # debug for contoroller packet out
+    if dpid.to_hex == "0x4" then
+      @dpid4 = dpid
+    end
       data = [200]
-      puts " * byte_count_binary: #{data.pack('Q*')}"
+      puts " * byte_count_binary #{dpid}: #{data.pack('Q*')}"
       #if byte_stats!=0 then
-        puts "send_packet_out debug"
+        puts "send_packet_out debug #{@dpid4}"
         actions = [
-               #SetDestinationMacAddress.new('08:00:27:74:6d:e1'),
-               SetDestinationMacAddress.new('20:c6:eb:0d:ac:68'),
-               SendOutPort.new(11)]
+               SetDestinationMacAddress.new('08:00:27:74:6d:e1'),
+               #SetDestinationMacAddress.new('20:c6:eb:0d:ac:68'),
+               SetSourceMacAddress.new('11:22:33:44:55:66'),
+               SendOutPort.new(:flood)]
         send_packet_out(
-          0x4,
+          @dpid4,
           raw_data: data.pack('Q*'),
           #raw_data: Parser::IPv4Packet.new(#transport_source_port: 2,
                                          #destination_ip_address: '192.168.1.3'
@@ -96,7 +102,7 @@ class RoutingSwitch < Trema::Controller
         send_packet_out(
           dpid,
           raw_data: data.pack('Q*'),
-          #raw_data: Parser::IPv4Packet.new(#destination_ip_address: '192.168.1.3'
+          #raw_data: Parser::IPv4Packet.new(#destination_ip_address: '192.168.1.100'
                                          #transport_destination_port: 1,
                                          #rest: byte_stats
                                          #),
@@ -115,7 +121,6 @@ class RoutingSwitch < Trema::Controller
       actions: actions)
 =end
 
-    puts "end============================================"
   end
 
   private
@@ -132,6 +137,7 @@ class RoutingSwitch < Trema::Controller
   end
 
   def send_message_flowstatsrequest 
+      puts "end============================================"
       puts "send FlowStatsRequest"
       puts "Start=========================================="
       send_message 0x4, Pio::FlowStats::Request.new(:match => Match.new())

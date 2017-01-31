@@ -5,6 +5,7 @@ require 'optparse'
 require 'path_in_slice_manager'
 require 'path_manager'
 require 'topology_controller'
+require 'pio'
 
 
 # L2 routing switch　+ 
@@ -21,9 +22,11 @@ class RoutingSwitch < Trema::Controller
   end
 
   timer_event :flood_lldp_frames, interval: 1.sec
-  timer_event :send_message_flowstatsrequest, interval: 10.sec
+  timer_event :send_message_flowstatsrequest, interval: 20.sec
 
   delegate :flood_lldp_frames, to: :@topology
+
+  @byte_threshold = 1000;
 
   def slice
     fail 'Slicing is disabled.' unless @options.slicing
@@ -36,12 +39,7 @@ class RoutingSwitch < Trema::Controller
     @topology = start_topology
     logger.info 'Routing Switch started.'
   end
-=begin
-  def switch_ready dpid
-    puts "#{dpid.to_hex}が起動しました"
-    @dpid=dpid
-  end
-=end
+
   delegate :switch_ready, to: :@topology
   delegate :features_reply, to: :@topology
   delegate :switch_disconnected, to: :@topology
@@ -50,21 +48,78 @@ class RoutingSwitch < Trema::Controller
   def packet_in(dpid, packet_in)
     @topology.packet_in(dpid, packet_in)
     @path_manager.packet_in(dpid, packet_in) unless packet_in.lldp?
-  end
-
-  def flow_stats_reply(dpid, message)
-    logger.info "Switch #{dpid.to_hex} stats_type = #{message.stats_type}"
-    logger.info "Switch #{dpid.to_hex} stats = #{message.stats}"
 =begin
-    send_packet_out(
-      dpid,
-      #raw_data: message.raw_data,
-      raw_data: message.stats,
-      actions: SendOutPort.new(11))
+      data = [200]
+      puts " * byte_count_binary: #{data.pack('Q*')}"
+      #if byte_stats!=0 then
+        puts "send_packet_out debug"
+        actions = [
+               #SetDestinationMacAddress.new('08:00:27:74:6d:e1'),
+               SetDestinationMacAddress.new('20:c6:eb:0d:ac:68'),
+               SendOutPort.new(11)]
+        send_packet_out(
+          0x4,
+          raw_data: data.pack('Q*'),
+          #raw_data: Parser::IPv4Packet.new(#transport_source_port: 2,
+                                         #destination_ip_address: '192.168.1.3'
+                                         #transport_destination_port: 1,
+                                         #rest: byte_stats
+                                         #),
+          actions: actions)
+      #end
 =end
   end
 
+  def flow_stats_reply(dpid, message)
+    logger.info "receive FlowStatsReply : Switch #{dpid.to_hex} #{message.stats_type} stats"
+    puts "start------------------------------------------"
+    message.stats.each do |each|
+      each.actions.each do |action|
+        puts "  * actions: #{action.to_s}"
+      end
+      puts "  * match: #{each.match.to_s}"
+      puts "  * packet_count: #{each.packet_count}"
+      puts "  * byte_count: #{each.byte_count}"
+      if each.byte_count>10000 then
+        puts "byte count over 10000"
+        # DoS 対策実行箇所
+        #Slice.destroy("slice_default")
+      end
+      byte_stats = each.byte_count
+      data = [each.byte_count]
+      puts " * byte_count_binary: #{data.pack('Q*')}"
+      if byte_stats!=0 then
+        puts "send_packet_out byte_count of #{dpid.to_hex}"
+        actions = [
+               SetDestinationMacAddress.new('08:00:27:74:6d:e1'),
+               SendOutPort.new(11)]
+        send_packet_out(
+          dpid,
+          raw_data: data.pack('Q*'),
+          #raw_data: Parser::IPv4Packet.new(#destination_ip_address: '192.168.1.3'
+                                         #transport_destination_port: 1,
+                                         #rest: byte_stats
+                                         #),
+          actions: actions)
+      end
+      puts "-----------------------------------------------"
+    end
+=begin
+    puts "send_packet_out stats"
+    actions = [
+               SetDestinationMacAddress.new('33:33:33:33:33:33'),
+               SendOutPort.new(2)]
+    send_packet_out(
+      dpid,
+      raw_data: message.stats.to_binary_s,
+      actions: actions)
+=end
+
+    puts "end============================================"
+  end
+
   private
+
 
   def start_path_manager
     fail unless @options
@@ -78,7 +133,8 @@ class RoutingSwitch < Trema::Controller
 
   def send_message_flowstatsrequest 
       puts "send FlowStatsRequest"
-      send_message 0x5, Pio::FlowStats::Request.new(:match => Match.new())
+      puts "Start=========================================="
+      send_message 0x4, Pio::FlowStats::Request.new(:match => Match.new())
   end
 
 

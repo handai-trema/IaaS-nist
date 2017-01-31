@@ -12,7 +12,7 @@ class PathInSliceManager < PathManager
 
   # rubocop:disable MethodLength
   def packet_in(_dpid, packet_in)
-    puts "packet_in_but_lldp #{_dpid.to_hex}(path in slice manager)\n"
+    #puts "packet_in_but_lldp #{_dpid.to_hex}(path in slice manager)\n"
     slice = Slice.find do |each|
       each.member?(packet_in.slice_source) &&
       each.member?(packet_in.slice_destination(@graph))

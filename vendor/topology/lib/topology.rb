@@ -44,6 +44,7 @@ class Topology
   end
 
   def delete_switch(dpid)
+    puts "delete_switch #{dpid}"
     delete_port(@ports[dpid].pop) until @ports[dpid].empty?
     @ports.delete dpid
     maybe_send_handler :delete_switch, dpid, self
@@ -84,6 +85,7 @@ class Topology
 
   def maybe_delete_link(port)
     @links.each do |each|
+      #puts "maybe_delete_link"
       next unless each.connect_to?(port)
       @links -= [each]
       port_a = Port.new(each.dpid_a, each.port_a)

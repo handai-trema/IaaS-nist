@@ -37,6 +37,7 @@ class TopologyController < Trema::Controller
   end
 
   def switch_disconnected(dpid)
+    puts "switch_disconnected #{dpid}"
     @topology.delete_switch dpid
   end
 
@@ -70,6 +71,7 @@ class TopologyController < Trema::Controller
         puts @arp_table
       end
       if @arp_table.include?(arp_request.target_protocol_address.to_s) then
+        puts "send ARP reply packet!!"
         send_packet_out(
           dpid,
           raw_data: Arp::Reply.new(
@@ -80,7 +82,6 @@ class TopologyController < Trema::Controller
           ).to_binary,
           actions: SendOutPort.new(packet_in.in_port)
         )
-        puts "ARP reply created!!"
       else
         @topology.ports.each do |dpid,ports|
           ports.each do |port|
@@ -92,7 +93,6 @@ class TopologyController < Trema::Controller
               end
             end
             if !flag then
-              #puts "dpid=#{dpid},port=#{port.port_no}"
               send_packet_out(
                 dpid,
                 raw_data: packet_in.raw_data,
@@ -119,7 +119,6 @@ class TopologyController < Trema::Controller
               end
             end
             if !flag then
-              #puts "dpid=#{dpid},port=#{port.port_no}"
               send_packet_out(
                 dpid,
                 raw_data: packet_in.raw_data,
@@ -139,7 +138,6 @@ class TopologyController < Trema::Controller
         #end
       end
     else
-      #puts packet_in.data.class
       p packet_in.ether_type.to_hex
     end
   end

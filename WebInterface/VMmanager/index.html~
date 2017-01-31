@@ -68,6 +68,18 @@
                       </div>
                     </div><!--/panel-body-->
                 </div><!--/panel-->
+
+<!--接続したいWebサイト-->
+                <div class="well"> 
+                     <form class="form-horizontal" role="form">
+                      <h4>Connect others' Web pages</h4><span style="color:#555555;">接続を希望する Web サーバーを起動している VM 名をご入力ください。</span>
+                       <div class="form-group" style="padding:14px;">
+          <input type="text" id="other-web-page" class="form-control input-lg" placeholder="VM name">
+                      </div>
+                      <button id="connectButton" class="btn btn-success pull-right" type="button" style="margin-top: -1em;">Connect</button><ul class="list-inline"><li><a href="#"><i class="glyphicon glyphicon-align-left"></i></a></li><li><a href="#"><i class="glyphicon glyphicon-align-center"></i></a></li><li><a href="#"><i class="glyphicon glyphicon-align-right"></i></a></li></ul>
+
+                    </form>
+                </div><!--/well-->
              
              
             </div><!--/col-->
@@ -158,6 +170,7 @@ Team nist All Rights Reserved.
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/scripts.js"></script>
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src=""></script>
 <script>
 var socket = io.connect();
 var vmNames = []; // 現在起動しているVMの全名前
@@ -167,6 +180,9 @@ var whichPlan; // 現在どのプランが選択されているか
 var volTsushin; // 通信容量（プランによって変更）
 var nowTsushin = 0; // 現在どれくらい使っているか
 var limitedFlag = false; // 通信制限にかかったか
+
+
+socket.on('ipaddress', function(ipaddress){
 
 $("#createButton").click(function(){
 
@@ -178,11 +194,10 @@ $("#createButton").click(function(){
   var vmName = $("#VMname").val();
   alert('Virtual Machine "'+vmName+'" が作成されました。');
 
-  socket.emit('create', vmName, function(data){
+  socket.emit('create', vmName+" "+ipaddress, function(data){
   vmNames.push(vmName);
   vmNumber++;
 
-  alert(data + " " +vmName+ " "+vmNumber);
   // Your VMs の中身を編集
   if(vmNumber == 1) {
     var vmList = document.getElementById('vmList');
@@ -219,6 +234,23 @@ $("#createButton").click(function(){
 
   } // 料金プラン選択の if 文
 });
+
+$("#connectButton").click(function(){
+
+  var webUrl = $("#other-web-page").val();
+  socket.emit('webconnect', webUrl, ipaddress);
+  socket.once('webpermission', function(data){
+    if(data == "y"){
+      alert("Web サイト "+webUrl+" に対する接続が許可されました。");
+    } else {
+      alert(data+"Web サイト "+webUrl+" に対する接続が拒否されました。");
+    }
+  });
+  alert('Web サイト "'+webUrl+'" に接続要求を送りました。管理者の許可が下りるまでしばらくお待ちください。');
+  document.getElementById('other-web-page').value = "";
+  
+});
+
 
 $("#deleteButton").click(function(){
   var vmName = window.prompt("削除する VM の名前を入力してください。","");
@@ -382,7 +414,10 @@ $("#planB").click(function(){
     }
     if((nowTsushin >= volTsushin) && (nowTsushin <= volTsushin + vmNumber)){
       stH5.textContent = "Plan "+whichPlan+" (LIMITED)";
-      alert("現在選択されているプランの通信料の上限を超えたため、通信が制限されています。");
+      if(!limitedFlag) { // 既に他のプロセスでアラートが表示されているか確認
+        alert("現在選択されているプランの通信料の上限を超えたため、通信が制限されています。");
+        limitedFlag = true;
+      }
     }
     }
   });
@@ -468,7 +503,10 @@ $("#planC").click(function(){
     }
     if((nowTsushin >= volTsushin) && (nowTsushin <= volTsushin + vmNumber)){
       stH5.textContent = "Plan "+whichPlan+" (LIMITED)";
-      alert("現在選択されているプランの通信料の上限を超えたため、通信が制限されています。");
+      if(!limitedFlag) { // 既に他のプロセスでアラートが表示されているか確認
+        alert("現在選択されているプランの通信料の上限を超えたため、通信が制限されています。");
+        limitedFlag = true;
+      }
     }
     }
   });
@@ -505,6 +543,7 @@ $("#planC").click(function(){
   }
 });
 
+}); // ipaddress
 
 </script>
 

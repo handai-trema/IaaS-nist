@@ -40,17 +40,20 @@ var server = http.createServer(function (req, res) {
 
 console.log('Server running at http://192.168.1.5:8174/');
 
+
 var io = socketio.listen(server);
 
 io.sockets.on('connection', function(socket) {
   console.log("connected.");
+  socket.emit('ipaddress',socket.handshake.address.slice(7));
+
   socket.on('create', function(data, fn) {
     console.log(data);
-/*    exec('sh create.sh '+data, (err, stdout, stderr) => {
+    exec('sh create.sh '+data, (err, stdout, stderr) => {
       if (err) { console.log(err); }
-      console.log(stdout);
-    });*/
-    fn("address"); // アドレス入れる
+      console.log("VM "+stdout+" を作成しました。");
+      fn(stdout); // アドレス入れる
+    });
     var i = 2;
     var timerSet = setInterval(function(){
       socket.emit('tsushin',i);
@@ -62,9 +65,41 @@ io.sockets.on('connection', function(socket) {
   });
   socket.on('delete', function(data) {
     console.log(data);
-/*    exec('sh stop.sh '+data, (err, stdout, stderr) => {
+    exec('sh stop.sh '+data, (err, stdout, stderr) => {
       if (err) { console.log(err); }
-      console.log(stdout);
-    });*/
+      console.log("VM "+data+" が削除されました。");
+    });
   });
+
+  socket.on('webconnect', function(dokoni, darega){
+    console.log("クライアント "+darega+" から、Web サイト "+dokoni+" に対する接続要求が来ています。許可する場合は y 許可しない場合は n を押し、Enter を押した後 Ctrl + c を押してください。");
+
+// 標準入力
+var yorn;
+var reader = require('readline').createInterface({
+  input: process.stdin,
+  output: process.stdout
 });
+reader.on('line', function(line) {
+  yorn = line;
+});
+reader.on('close', function() {
+    socket.emit('webpermission',yorn);
+    // 「重要」接続処理に関するコマンド追加
+    if(yorn == "y"){
+    exec('sh connect.sh '+, (err, stdout, stderr) => {
+      if (err) { console.log(err); }
+      console.log("VM "+data+" が削除されました。");
+    });
+    } else {
+    }
+
+});// 標準入力
+
+
+  });
+
+});
+
+
+

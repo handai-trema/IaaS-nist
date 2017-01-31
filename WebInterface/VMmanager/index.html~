@@ -50,7 +50,7 @@
 <!--Create VM-->
                 <div class="well"> 
                      <form class="form-horizontal" role="form">
-                      <h4>Create your VMs</h4><span style="color:#555555;">今すぐ Web サービスを作ってみよう！</span>
+                      <h4>Create your VMs</h4><span style="color:#555555;">課金プランを選択後、VM 名を入力してください。</span>
                        <div class="form-group" style="padding:14px;">
           <input type="text" id="VMname" class="form-control input-lg" placeholder="VM name">
                       </div>
@@ -74,37 +74,9 @@
             
             <div class="col-sm-6">
         
-<!--利用状況-->
-              <div class="panel panel-default">
-                 <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>Status</h4></div>
-                  <div class="panel-body">
-
-                    <h5>VM 1</h5>
-                    <div class="progress">
-                      <div class="progress-bar progress-bar-info" style="width: 20%"></div>
-                    </div>
-
-                    <h5>VM 2</h5>
-                    <div class="progress">
-                      <div class="progress-bar progress-bar-success" style="width: 40%"></div>
-                    </div>
-
-                    <h5>VM 3</h5>
-                    <div class="progress">
-                      <div class="progress-bar progress-bar-warning" style="width: 80%"></div>
-                    </div>
-
-                    <h5>VM 4</h5>
-                    <div class="progress">
-                      <div class="progress-bar progress-bar-danger" style="width: 50%"></div>
-                    </div>
-                    
-                  </div><!--/panel-body-->
-              </div><!--/panel-->
-              
 <!--料金プラン-->
               <div class="panel panel-default">
-                 <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>Recommended Plan</h4></div>
+                 <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>Payment Plan</h4></div>
                   <div class="panel-body">
       
                       <ul class="nav nav-tabs">
@@ -115,19 +87,32 @@
                       <div class="tabbable">
                         <div class="tab-content">
                           <div class="tab-pane active" id="A">
-                            <div class="well well-sm">You use Plan A now.</div>
+                            <div class="well well-sm">Plan A (¥1000) では、100MB の通信量まで通信を行うことができます。</br>※ 100MB を超えますと通信が制限されますので、ご注意ください。</div>
+<button id="planA" class="btn btn-primary pull-right">Select</button>
                           </div>
                           <div class="tab-pane" id="B">
-                            <div class="well well-sm">Plan B is ...</div>
+                            <div class="well well-sm">Plan B (¥5000) では、1GB の通信量まで通信を行うことができます。</br>※ 1GB を超えますと通信が制限されますので、ご注意ください。</div>
+<button id="planB" class="btn btn-primary pull-right">Select</button>
                           </div>
                           <div class="tab-pane" id="C">
-                            <div class="well well-sm">Plan C is ...</div>
+                            <div class="well well-sm">Plan C (¥10000) では、10GB の通信量まで通信を行うことができます。</br>※ 10GB を超えますと通信が制限されますので、ご注意ください。</div>
+<button id="planC" class="btn btn-primary pull-right">Select</button>
                           </div>
                         </div>
                       </div> <!-- /tabbable -->
                                         
                   </div><!--/panel-body-->
                </div> <!--/panel-->
+
+<!--利用状況-->
+              <div class="panel panel-default">
+                 <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>Status</h4></div>
+                  <div id="VMstatus" class="panel-body">
+料金プランが選択されていません。
+                    
+                  </div><!--/panel-body-->
+              </div><!--/panel-->
+              
 
               </div><!--/col-->
           </div><!--/row-->
@@ -175,22 +160,35 @@ Team nist All Rights Reserved.
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script>
 var socket = io.connect();
-var vmNames = [];
-var vmNumber = 0;
+var vmNames = []; // 現在起動しているVMの全名前
+var vmNumber = 0; // 現在起動しているVMの数
+var planSelectedFlag = false; // プランが選択されているか
+var whichPlan; // 現在どのプランが選択されているか
+var volTsushin; // 通信容量（プランによって変更）
+var nowTsushin = 0; // 現在どれくらい使っているか
+var limitedFlag = false; // 通信制限にかかったか
 
 $("#createButton").click(function(){
+
+  // 最初にプランが選択されているか確認
+  if(!planSelectedFlag){
+    alert('"Payment Plan" より、料金プランを選択してください。');
+  } else {
+
   var vmName = $("#VMname").val();
   alert('Virtual Machine "'+vmName+'" が作成されました。');
-  socket.emit('create', vmName);
+
+  socket.emit('create', vmName, function(data){
   vmNames.push(vmName);
   vmNumber++;
 
+  alert(data + " " +vmName+ " "+vmNumber);
   // Your VMs の中身を編集
   if(vmNumber == 1) {
     var vmList = document.getElementById('vmList');
     vmList.innerHTML = "";
     var li = document.createElement('a');
-    li.textContent = vmName;
+    li.textContent = vmName + " @ " + data;
     li.setAttribute('href','#');
     li.setAttribute('class','list-group-item active');
     li.setAttribute('id','vm-list-'+vmName);
@@ -199,7 +197,7 @@ $("#createButton").click(function(){
     if(vmNumber % 2 == 1) {
     var vmList = document.getElementById('vmList');
     var li = document.createElement('a');
-    li.textContent = vmName;
+    li.textContent = vmName + " @ " + data;
     li.setAttribute('href','#');
     li.setAttribute('class','list-group-item active');
     li.setAttribute('id','vm-list-'+vmName);
@@ -207,7 +205,7 @@ $("#createButton").click(function(){
     } else {
     var vmList = document.getElementById('vmList');
     var li = document.createElement('a');
-    li.textContent = vmName;
+    li.textContent = vmName + " @ " + data;
     li.setAttribute('href','#');
     li.setAttribute('class','list-group-item');
     li.setAttribute('id','vm-list-'+vmName);
@@ -217,13 +215,16 @@ $("#createButton").click(function(){
 
   // 中身のクリア
   document.getElementById('VMname').value = "";
+  });
+
+  } // 料金プラン選択の if 文
 });
 
 $("#deleteButton").click(function(){
   var vmName = window.prompt("削除する VM の名前を入力してください。","");
   if(vmNames.indexOf(vmName) >= 0) {
+    socket.emit('delete', vmName);
     alert('Virtual Machine "'+vmName+'" が削除されました。');
-//    socket.emit('delete', vmName);
     var vmList = document.getElementById('vmList');
     var vm = document.getElementById('vm-list-'+vmName);
     // 1 個ずつ active をずらす
@@ -243,6 +244,264 @@ $("#deleteButton").click(function(){
     }
   } else {
     alert("現在、あなたの管理する VM にその名前の VM はありません。もう一度入力してください。");
+  }
+});
+
+$("#planA").click(function(){
+
+  // まだプランが選択されていなかったら
+  if(!planSelectedFlag) {
+  var planButton = document.getElementById('planA');
+  planButton.textContent = "Selected";
+  planButton.setAttribute('class','btn btn-danger pull-right');
+  alert("Plan A が選択されました。通信料 100MB までご利用いただけます。");
+  planSelectedFlag = true;
+  whichPlan = "A";
+  volTsushin = 100; // 通信容量
+  
+  // ステータスに追加
+  var vmStatus = document.getElementById('VMstatus');
+  if(vmNumber == 0){
+    vmStatus.innerHTML = "";
+  }
+  var stH5 = document.createElement('h5');
+  stH5.textContent = "Plan "+whichPlan+" ("+nowTsushin+"/"+volTsushin+")";
+  stH5.setAttribute('id','use-rate');
+  var stDiv = document.createElement('div');
+  stDiv.setAttribute('class','progress');
+  var stDivBar = document.createElement('div');
+  stDivBar.setAttribute('id','status-bar');
+  stDivBar.setAttribute('class','progress-bar progress-bar-info');
+  stDivBar.setAttribute('style','width: 1%;');
+  stDiv.appendChild(stDivBar);
+  vmStatus.appendChild(stH5);
+  vmStatus.appendChild(stDiv);
+
+  socket.on('tsushin',function(data){ // 通信発生時に通信量カウント
+    if(nowTsushin > volTsushin){
+    } else {
+    nowTsushin++;
+    stH5.textContent = "Plan "+whichPlan+" ("+nowTsushin+"/"+volTsushin+")";    
+    stDivBar.setAttribute('style','width: '+nowTsushin * 100 / volTsushin+'%;')
+    if(nowTsushin == volTsushin * 0.5){
+      stDivBar.setAttribute('class','progress-bar progress-bar-warning');
+    }
+    if(nowTsushin == volTsushin * 0.8){
+      stDivBar.setAttribute('class','progress-bar progress-bar-danger');
+      alert("現在選択されているプランの通信量の上限を超えるかもしれません。プランの変更をオススメします。");
+    }
+    if((nowTsushin >= volTsushin) && (nowTsushin <= volTsushin + vmNumber)){
+      stH5.textContent = "Plan "+whichPlan+" (LIMITED)";
+      if(!limitedFlag) { // 既に他のプロセスでアラートが表示されているか確認
+        alert("現在選択されているプランの通信料の上限を超えたため、通信が制限されています。");
+        limitedFlag = true;
+      }
+    }
+    }
+  });
+
+  } else { // 既にプランが選択されていたら
+    // plan A だったら
+    if(whichPlan == "A"){
+    } else {  // プラン変更時
+  if(nowTsushin >= 100){
+    alert("既にご利用の通信量が 100MB を超えているため、Plan A をご選択いただけません。");
+  } else {
+    var planButton = document.getElementById('planA');
+    planButton.textContent = "Selected";
+    planButton.setAttribute('class','btn btn-danger pull-right');
+    alert("Plan A が選択されました。通信量 100MB までご利用いただけます。");
+
+    // 他のプランの選択中ボタンを元に戻す
+    var prePlanButton = document.getElementById('plan'+whichPlan);
+    prePlanButton.textContent = "Select";
+    prePlanButton.setAttribute('class','btn btn-info pull-right');
+    whichPlan = "A";
+    volTsushin = 100; // 通信容量
+
+    // ステータスのプラン名変更
+    var stPlanName = document.getElementById('use-rate');
+    stPlanName.textContent = "Plan "+whichPlan+" ("+nowTsushin+"/"+volTsushin+")";
+
+    // ステータスバーの色更新
+    var barForColor = document.getElementById('status-bar');
+    if(nowTsushin <= volTsushin * 0.5){
+      barForColor.setAttribute('class','progress-bar progress-bar-info');
+    } else if(nowTsushin >= volTsushin * 0.8) {
+      barForColor.setAttribute('class','progress-bar progress-bar-danger');
+    } else {
+      barForColor.setAttribute('class','progress-bar progress-bar-warning');
+    }
+  } // nowTsushin
+    }// whichPlan 
+  }
+});
+
+$("#planB").click(function(){
+
+  // まだプランが選択されていなかったら
+  if(!planSelectedFlag) {
+  var planButton = document.getElementById('planB');
+  planButton.textContent = "Selected";
+  planButton.setAttribute('class','btn btn-danger pull-right');
+  alert("Plan B が選択されました。通信料 1GB までご利用いただけます。");
+  planSelectedFlag = true;
+  whichPlan = "B";
+  volTsushin = 1000; // 通信容量
+
+  // ステータスに追加
+  var vmStatus = document.getElementById('VMstatus');
+  if(vmNumber == 0){
+    vmStatus.innerHTML = "";
+  }
+  var stH5 = document.createElement('h5');
+  stH5.textContent = "Plan "+whichPlan+" ("+nowTsushin+"/"+volTsushin+")";
+  stH5.setAttribute('id','use-rate');
+  var stDiv = document.createElement('div');
+  stDiv.setAttribute('class','progress');
+  var stDivBar = document.createElement('div');
+  stDivBar.setAttribute('id','status-bar');
+  stDivBar.setAttribute('class','progress-bar progress-bar-info');
+  stDivBar.setAttribute('style','width: 1%;');
+  stDiv.appendChild(stDivBar);
+  vmStatus.appendChild(stH5);
+  vmStatus.appendChild(stDiv);
+
+  socket.on('tsushin',function(data){ // 通信発生時に通信量カウント
+    if(nowTsushin > volTsushin){
+    } else {
+    nowTsushin++;
+    stH5.textContent = "Plan "+whichPlan+" ("+nowTsushin+"/"+volTsushin+")";    
+    stDivBar.setAttribute('style','width: '+nowTsushin * 100 / volTsushin+'%;')
+    if(nowTsushin == volTsushin * 0.5){
+      stDivBar.setAttribute('class','progress-bar progress-bar-warning');
+    }
+    if(nowTsushin == volTsushin * 0.8){
+      stDivBar.setAttribute('class','progress-bar progress-bar-danger');
+      alert("現在選択されているプランの通信量の上限を超えるかもしれません。プランの変更をオススメします。");
+    }
+    if((nowTsushin >= volTsushin) && (nowTsushin <= volTsushin + vmNumber)){
+      stH5.textContent = "Plan "+whichPlan+" (LIMITED)";
+      alert("現在選択されているプランの通信料の上限を超えたため、通信が制限されています。");
+    }
+    }
+  });
+
+  } else { // 既にプランが選択されていたら
+    // plan B だったら
+    if(whichPlan == "B"){
+    } else {
+  if(nowTsushin >= 1000){
+    alert("既にご利用の通信量が 1GB を超えているため、Plan B をご選択いただけません。");
+  } else {
+  var planButton = document.getElementById('planB');
+  planButton.textContent = "Selected";
+  planButton.setAttribute('class','btn btn-danger pull-right');
+  alert("Plan B が選択されました。通信料 1GB までご利用いただけます。");
+      // 他のプランの選択中ボタンを元に戻す
+      var prePlanButton = document.getElementById('plan'+whichPlan);
+      prePlanButton.textContent = "Select";
+      prePlanButton.setAttribute('class','btn btn-info pull-right');
+    whichPlan = "B";
+    volTsushin = 1000; // 通信容量
+
+    // ステータスのプラン名変更
+    var stPlanName = document.getElementById('use-rate');
+    stPlanName.textContent = "Plan "+whichPlan+" ("+nowTsushin+"/"+volTsushin+")";
+
+    // ステータスバーの色更新
+    var barForColor = document.getElementById('status-bar');
+    if(nowTsushin <= volTsushin * 0.5){
+      barForColor.setAttribute('class','progress-bar progress-bar-info');
+    } else if(nowTsushin >= volTsushin * 0.8) {
+      barForColor.setAttribute('class','progress-bar progress-bar-danger');
+    } else {
+      barForColor.setAttribute('class','progress-bar progress-bar-warning');
+    }
+  }
+    }
+  }
+});
+
+$("#planC").click(function(){
+
+  // まだプランが選択されていなかったら
+  if(!planSelectedFlag) {
+  var planButton = document.getElementById('planC');
+  planButton.textContent = "Selected";
+  planButton.setAttribute('class','btn btn-danger pull-right');
+  alert("Plan C が選択されました。通信料 10GB までご利用いただけます。");
+  planSelectedFlag = true;
+  whichPlan = "C";
+  volTsushin = 10000; // 通信容量
+
+  // ステータスに追加
+  var vmStatus = document.getElementById('VMstatus');
+  if(vmNumber == 0){
+    vmStatus.innerHTML = "";
+  }
+  var stH5 = document.createElement('h5');
+  stH5.textContent = "Plan "+whichPlan+" ("+nowTsushin+"/"+volTsushin+")";
+  stH5.setAttribute('id','use-rate');
+  var stDiv = document.createElement('div');
+  stDiv.setAttribute('class','progress');
+  var stDivBar = document.createElement('div');
+  stDivBar.setAttribute('id','status-bar');
+  stDivBar.setAttribute('class','progress-bar progress-bar-info');
+  stDivBar.setAttribute('style','width: 1%;');
+  stDiv.appendChild(stDivBar);
+  vmStatus.appendChild(stH5);
+  vmStatus.appendChild(stDiv);
+
+  socket.on('tsushin',function(data){ // 通信発生時に通信量カウント
+    if(nowTsushin > volTsushin){
+    } else {
+    nowTsushin++;
+    stH5.textContent = "Plan "+whichPlan+" ("+nowTsushin+"/"+volTsushin+")";    
+    stDivBar.setAttribute('style','width: '+nowTsushin * 100 / volTsushin+'%;')
+    if(nowTsushin == volTsushin * 0.5){
+      stDivBar.setAttribute('class','progress-bar progress-bar-warning');
+    }
+    if(nowTsushin == volTsushin * 0.8){
+      stDivBar.setAttribute('class','progress-bar progress-bar-danger');
+      alert("現在選択されているプランの通信量の上限を超えるかもしれません。プランの変更をオススメします。");
+    }
+    if((nowTsushin >= volTsushin) && (nowTsushin <= volTsushin + vmNumber)){
+      stH5.textContent = "Plan "+whichPlan+" (LIMITED)";
+      alert("現在選択されているプランの通信料の上限を超えたため、通信が制限されています。");
+    }
+    }
+  });
+
+  } else { // 既にプランが選択されていたら
+    // plan A だったら
+    if(whichPlan == "C"){
+    } else {
+  var planButton = document.getElementById('planC');
+  planButton.textContent = "Selected";
+  planButton.setAttribute('class','btn btn-danger pull-right');
+  alert("Plan C が選択されました。通信料 10GB までご利用いただけます。");
+      // 他のプランの選択中ボタンを元に戻す
+      var prePlanButton = document.getElementById('plan'+whichPlan);
+      prePlanButton.textContent = "Select";
+      prePlanButton.setAttribute('class','btn btn-info pull-right');
+    whichPlan = "C";
+    volTsushin = 10000; // 通信容量
+
+    // ステータスのプラン名変更
+    var stPlanName = document.getElementById('use-rate');
+    stPlanName.textContent = "Plan "+whichPlan+" ("+nowTsushin+"/"+volTsushin+")";
+
+    // ステータスバーの色更新
+    var barForColor = document.getElementById('status-bar');
+    if(nowTsushin <= volTsushin * 0.5){
+      barForColor.setAttribute('class','progress-bar progress-bar-info');
+    } else if(nowTsushin >= volTsushin * 0.8) {
+      barForColor.setAttribute('class','progress-bar progress-bar-danger');
+    } else {
+      barForColor.setAttribute('class','progress-bar progress-bar-warning');
+    }
+    }
   }
 });
 

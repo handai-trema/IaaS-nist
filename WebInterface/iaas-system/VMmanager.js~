@@ -44,18 +44,27 @@ var io = socketio.listen(server);
 
 io.sockets.on('connection', function(socket) {
   console.log("connected.");
-  socket.on('create', function(data) {
+  socket.on('create', function(data, fn) {
     console.log(data);
-    exec('sh create.sh '+data, (err, stdout, stderr) => {
+/*    exec('sh create.sh '+data, (err, stdout, stderr) => {
       if (err) { console.log(err); }
       console.log(stdout);
-    });
+    });*/
+    fn("address"); // アドレス入れる
+    var i = 2;
+    var timerSet = setInterval(function(){
+      socket.emit('tsushin',i);
+      if(i == 100){
+        clearInterval(timerSet);
+      }
+      i++;
+    },1000);
   });
-  socket.on('remove', function(data) {
+  socket.on('delete', function(data) {
     console.log(data);
-    exec('sh stop.sh '+data, (err, stdout, stderr) => {
+/*    exec('sh stop.sh '+data, (err, stdout, stderr) => {
       if (err) { console.log(err); }
       console.log(stdout);
-    });
+    });*/
   });
 });

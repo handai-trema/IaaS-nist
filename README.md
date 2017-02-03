@@ -46,48 +46,68 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 			# configure
 
 1. マネジメントポート設定
+
 			(config)# interface mgmt 0
 			(config-if)# ip address 192.168.1.1 255.255.255.0
 			(config-if)# exit
+
 1. telnet接続許可
+
 			(config)# line vty 0 2
 			(config-line)# exit
+
 1. システムクロックの設定
+
 			(config)# clock timezone JST +9
+
 1. Spanning-tree無効化
+
 			(config)# spanning-tree disable
+
 1. フローコントロール無効化
+
 			(config)# system flowcontrol off
+
 1. 保存
+
 			(config)# save
 
 
 ### 設定用端末の設定
 設定用端末とコントローラは同一のマシンである。
 
-1. 物理接続
-		設定用端末とPF5240のマネジメントポートをLANケーブルで接続
+1. 物理接続  
+設定用端末とPF5240のマネジメントポートをLANケーブルで接続
 1. 設定用端末で Virtualbox を起動。
 1. ID:ensyuu2 / Password:ensyuu2 でログイン。
-1. Controller に IP アドレスを設定
-	* アドレス：192.168.1.2
-	* サブネットマスク：255.255.255.0
+1. Controller に IP アドレスを設定  
+	* アドレス：192.168.1.2  
+	* サブネットマスク：255.255.255.0  
   　	* ゲートウェイ:192.168.1.1
 1. 設定用端末設定
+
 			$ sudo ip addr add 192.168.1.2/24 dev eth0
+
 1. telnet でPF5240にアクセス
+
 			$ telnet 192.168.1.1
+
 1. ログイン
     * username : operatoor
-    * passwork : <none>
+    * password : \<none>
 1. コンフィグレーションコマンドモードで実行
+
 			> enable
 			# configure
+
 1. VLAN定義
+
 			(config)# vlan <VLAN id>
 			(config-vlan)# exit
-	VLAN id　の値は、100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600を入力した。
+
+VLAN id　の値は、100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600を入力した。
 1. インスタンス作成
+
 			(config)# openflow openflow-id <VSI id> virtual-switch
 			(config-of)# controller controller-name cntl1 1 192.168.1.2 port 6653
 			(config-of)# dpid <dpid>
@@ -95,23 +115,33 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 			(config-of)# miss-action controller
 			(config-of)# enable
 			(config-of)# exit
-	VSI id は1,2,・・・,16、VLAN id は前述の16個、
-	dpid　は、0000000000000001,0000000000000002,・・・,0000000000000016の16個をそれぞれ入力した。
+
+VSI id は1,2,・・・,16、VLAN id は前述の16個、dpid　は、0000000000000001,0000000000000002,・・・,0000000000000016の16個をそれぞれ入力した。
+
+
 			(config-of)# openflow-vlan <VLAN id>
-	を実行する際に、
+
+を実行する際に、
+
 			(config-of)# openflow-vlan 100
 			openflow : Can't set because the OpenFlow instance is enabled.
-	というエラーが出現する場合は、既に VSI (OpenFlow スイッチのインスタンス) がenable 状態になっているため、設定変更できないという旨のエラーであるため、
+
+というエラーが出現する場合は、既に VSI (OpenFlow スイッチのインスタンス) がenable 状態になっているため、設定変更できないという旨のエラーであるため、
+
 			(config-of)# no enable
 			(config-of)# openflow-vlan <VLAN id>
 			(config-of)# enable
-	と入力することにより、VSIを一旦disableにしてから設定を行い、enable状態にする。
+
+と入力することにより、VSIを一旦disableにしてから設定を行い、enable状態にする。
 1. 各VSIへのポートマップ
+
 			(config)# interface range gigabitethernet 0/<from_port>-<to_port>
 			(config-interface)# switchport mode dot1q-tunnel
 			(config-interface)# switchport access vlan <VLAN id>
-	今回VSIは16個であり、実機のポートは48個であったので、各VSIに3ポートずつ（VLAN ID 100 に、1,2,3番ポート）マップした。
+
+今回VSIは16個であり、実機のポートは48個であったので、各VSIに3ポートずつ（VLAN ID 100 に、1,2,3番ポート）マップした。
 1. 設定の保存
+
 			(config)# save
 
 
@@ -131,25 +161,37 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 1. ID:ensyuu2 / Password:ensyuu2 でログイン
 1. GitHub から Controller のファイル一式を Clone し、 master ブランチへ移動
 1. スイッチ接続用ネットワークへの接続
-1. 既存のtremaのファイルの変更
-	統計情報取得のためにハンドラを設定したファイルに変更する。
+1. 既存のtremaのファイルの変更  
+統計情報取得のためにハンドラを設定したファイルに変更する。
+
 			$ bundle install --binstubs
+
 を実行して作成される`/.rvm/gems/ruby-2.2.5/gems/trema-0.9.0/lib/trema/controller.rb `を
-IaaS-nist/trema配下にある[controller.rb](https://github.com/handai-trema/IaaS-nist/tree/master/trema/controller.rb) に変更する。
+`IaaS-nist/trema`配下にある[controller.rb](https://github.com/handai-trema/IaaS-nist/tree/master/trema/controller.rb) に変更する。
 1. telnet 実行
+
 			$ telnet 192.168.1.1
+
 1. ログイン
 	* username : operatoor
-	* passwork : <none>
+	* password : \<none>
 1. コンフィグレーションコマンドモードで実行
+
 			> enable
 			# configure
+
 1. ~/IaaS-nist/ に移動し、以下のコマンドを実行して Controller を起動
+
 			$ ./bin/trema run ./lib/routing_switch_nist.rb  -- --slicing
+
 1. 別ターミナルを起動し、~/IaaS-nist/にて以下のコマンドを実行し、デフォルトスライスを設定
+
 			$ sh default.sh
+
 1. 別ターミナルを起動し、~/IaaS-nist/にて以下のコマンドを実行し、トポロジ情報表示のためのサーバーを起動
+
 			$ sh ./output/server.sh
+
 1. ブラウザを起動し、`http://localhost:8080/output/`にアクセスすることで、トポロジ状態を確認できる。
 
 

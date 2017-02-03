@@ -17,7 +17,7 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 ## 成果物の説明
 * Controller のソースコード
     * Controller 操作に関するモジュールは主に /lib/ に配置
-　　　　* /trema/ に統計情報取得のために改変したファイル（[controller.rb](https://github.com/handai-trema/IaaS-nist/tree/master/trema/controller.rb）)を配置
+　　　　* /trema/ に統計情報取得のために改変したファイル（[controller.rb](https://github.com/handai-trema/IaaS-nist/tree/master/trema/controller.rb))を配置
 * WEBインターフェース
     * 
 * VMマネージャー

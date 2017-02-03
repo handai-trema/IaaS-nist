@@ -169,8 +169,7 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 
 			$ bundle install --binstubs
 
-	を実行して作成される`/.rvm/gems/ruby-2.2.5/gems/trema-0.9.0/lib/trema/controller.rb `を
-`IaaS-nist/trema`配下にある[controller.rb](https://github.com/handai-trema/IaaS-nist/tree/master/trema/controller.rb) に変更する。
+	を実行して作成される`/.rvm/gems/ruby-2.2.5/gems/trema-0.9.0/lib/trema/controller.rb `を`IaaS-nist/trema`配下にある[controller.rb](https://github.com/handai-trema/IaaS-nist/tree/master/trema/controller.rb) に変更する。
 
 1. telnet 実行
 
@@ -210,7 +209,7 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 	
 
 
-### VMマネージャーの設定
+### VMマネージャーの使い方
 
 1. スイッチの11番ポートに接続
 1. IP,MACアドレスの設定

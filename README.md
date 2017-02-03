@@ -39,10 +39,12 @@ OpenFlow（Trema）によって、統計情報が取得されており、
     * フロー制御: なし
 1. ログイン
     * username : operator
-    * password : <none>
+    * password : \<none>
 1. コンフィグレーションコマンドモードで実行
+
 			> enable
 			# configure
+
 1. マネジメントポート設定
 			(config)# interface mgmt 0
 			(config-if)# ip address 192.168.1.1 255.255.255.0

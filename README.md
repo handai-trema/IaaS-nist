@@ -104,8 +104,7 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 
 			(config)# vlan <VLAN id>
 			(config-vlan)# exit
-
-VLAN id　の値は、100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600を入力した。
+	VLAN id　の値は、100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600を入力した。
 
 1. インスタンス作成
 
@@ -117,23 +116,22 @@ VLAN id　の値は、100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,14
 			(config-of)# enable
 			(config-of)# exit
 
-VSI id は1,2,・・・,16、VLAN id は前述の16個、dpid　は、0000000000000001,0000000000000002,・・・,0000000000000016の16個をそれぞれ入力した。
-
+	VSI id は1,2,・・・,16、VLAN id は前述の16個、dpid　は、0000000000000001,0000000000000002,・・・,0000000000000016の16個をそれぞれ入力した。
 
 			(config-of)# openflow-vlan <VLAN id>
 
-を実行する際に、
+	を実行する際に、
 
 			(config-of)# openflow-vlan 100
 			openflow : Can't set because the OpenFlow instance is enabled.
 
-というエラーが出現する場合は、既に VSI (OpenFlow スイッチのインスタンス) がenable 状態になっているため、設定変更できないという旨のエラーであるため、
+	というエラーが出現する場合は、既に VSI (OpenFlow スイッチのインスタンス) がenable 状態になっているため、設定変更できないという旨のエラーであるため、
 
 			(config-of)# no enable
 			(config-of)# openflow-vlan <VLAN id>
 			(config-of)# enable
 
-と入力することにより、VSIを一旦disableにしてから設定を行い、enable状態にする。  
+	と入力することにより、VSIを一旦disableにしてから設定を行い、enable状態にする。  
 
 1. 各VSIへのポートマップ
 
@@ -141,7 +139,7 @@ VSI id は1,2,・・・,16、VLAN id は前述の16個、dpid　は、0000000000
 			(config-interface)# switchport mode dot1q-tunnel
 			(config-interface)# switchport access vlan <VLAN id>
 
-今回VSIは16個であり、実機のポートは48個であったので、各VSIに3ポートずつ（VLAN ID 100 に、1,2,3番ポート）マップした。
+	今回VSIは16個であり、実機のポートは48個であったので、各VSIに3ポートずつ（VLAN ID 100 に、1,2,3番ポート）マップした。
 
 1. 設定の保存
 

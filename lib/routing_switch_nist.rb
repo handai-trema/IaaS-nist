@@ -88,12 +88,13 @@ class RoutingSwitch < Trema::Controller
       puts "  * byte_count: #{each.byte_count}"
       if each.byte_count>10000 then
         puts "byte count over 10000"
+        puts "DoS Attack measures"
         # DoS 対策実行箇所
         #Slice.destroy("slice_default")
       end
       byte_stats = each.byte_count
       data = [each.byte_count]
-      puts " * byte_count_binary: #{data.pack('Q*')}"
+      #puts " * byte_count_binary: #{data.pack('Q*')}"
       if byte_stats!=0 then
         puts "send_packet_out byte_count of #{dpid.to_hex}"
         actions = [

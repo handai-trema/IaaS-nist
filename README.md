@@ -41,71 +41,71 @@ OpenFlow（Trema）によって、統計情報が取得されており、
     * username : operator
     * password : <none>
 1. コンフィグレーションコマンドモードで実行
-```
-　> enable
-　# configure
-```
+	```
+	　> enable
+	　# configure
+	```
 1. マネジメントポート設定
-```
-(config)# interface mgmt 0
-(config-if)# ip address 192.168.1.1 255.255.255.0
-(config-if)# exit
-```
+	```
+	(config)# interface mgmt 0
+	(config-if)# ip address 192.168.1.1 255.255.255.0
+	(config-if)# exit
+	```
 1. telnet接続許可
-```
-(config)# line vty 0 2
-(config-line)# exit
-```
+	```
+	(config)# line vty 0 2
+	(config-line)# exit
+	```
 1. システムクロックの設定
-```
-(config)# clock timezone JST +9
-```
+	```
+	(config)# clock timezone JST +9
+	```
 1. Spanning-tree無効化
-```
-(config)# spanning-tree disable
-```
+	```
+	(config)# spanning-tree disable
+	```
 1. フローコントロール無効化
-```
-(config)# system flowcontrol off
-```
+	```
+	(config)# system flowcontrol off
+	```
 1. 保存
-```
-(config)# save
-```
+	```
+	(config)# save
+	```
 
 ### 設定用端末の設定
 設定用端末とコントローラは同一のマシンである。
 
 1. 物理接続
-	設定用端末とPF5240のマネジメントポートをLANケーブルで接続
+    設定用端末とPF5240のマネジメントポートをLANケーブルで接続
 1. 設定用端末で Virtualbox を起動。
 1. ID:ensyuu2 / Password:ensyuu2 でログイン。
 1. Controller に IP アドレスを設定
-  　　* アドレス：192.168.1.2
+    * アドレス：192.168.1.2
   　　* サブネットマスク：255.255.255.0
   　　* ゲートウェイ:192.168.1.1
 1. 設定用端末設定
-```
-$ sudo ip addr add 192.168.1.2/24 dev eth0
-```
+    ```
+    $ sudo ip addr add 192.168.1.2/24 dev eth0
+    ```
 1. telnet でPF5240にアクセス
-```
-$ telnet 192.168.1.1
-```
+    ```
+    $ telnet 192.168.1.1
+    ```
 1. ログイン
-　　　　* username : operatoor
+    * username : operatoor
     * passwork : <none>
 1. コンフィグレーションコマンドモードで実行
-```
-　> enable
-　# configure
-```
+	```
+	　> enable
+	　# configure
+	```
 1. VLAN定義
-```
-(config)# vlan <VLAN id>
-(config-vlan)# exit
-```
-VLAN id　の値は、100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600を入力した。
+	```
+	(config)# vlan <VLAN id>
+	(config-vlan)# exit
+	```
+	VLAN id　の値は、100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600を入力した。
 1. インスタンス作成
 ```
 (config)# openflow openflow-id <VSI id> virtual-switch

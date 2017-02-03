@@ -172,7 +172,7 @@ enable 状態になっているため、設定変更できないという旨の�
 $ bundle install --binstubs
 ```
 を実行して作成される`/.rvm/gems/ruby-2.2.5/gems/trema-0.9.0/lib/trema/controller.rb `を
-IaaS-nist/trema配下にある[controller.rb](https://github.com/handai-trema/IaaS-nist/tree/master/trema/controller.rb）に変更する。
+IaaS-nist/trema配下にある[controller.rb](https://github.com/handai-trema/IaaS-nist/tree/master/trema/controller.rb) に変更する。
 1. telnet 実行
 ```
 $ telnet 192.168.1.1

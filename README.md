@@ -83,7 +83,7 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 1. Controller に IP アドレスを設定  
 	* アドレス：192.168.1.2  
 	* サブネットマスク：255.255.255.0  
-  　	* ゲートウェイ:192.168.1.1
+	* ゲートウェイ:192.168.1.1
 1. 設定用端末設定
 
 			$ sudo ip addr add 192.168.1.2/24 dev eth0
@@ -106,6 +106,7 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 			(config-vlan)# exit
 
 VLAN id　の値は、100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600を入力した。
+
 1. インスタンス作成
 
 			(config)# openflow openflow-id <VSI id> virtual-switch
@@ -132,7 +133,8 @@ VSI id は1,2,・・・,16、VLAN id は前述の16個、dpid　は、0000000000
 			(config-of)# openflow-vlan <VLAN id>
 			(config-of)# enable
 
-と入力することにより、VSIを一旦disableにしてから設定を行い、enable状態にする。
+と入力することにより、VSIを一旦disableにしてから設定を行い、enable状態にする。  
+
 1. 各VSIへのポートマップ
 
 			(config)# interface range gigabitethernet 0/<from_port>-<to_port>
@@ -140,6 +142,7 @@ VSI id は1,2,・・・,16、VLAN id は前述の16個、dpid　は、0000000000
 			(config-interface)# switchport access vlan <VLAN id>
 
 今回VSIは16個であり、実機のポートは48個であったので、各VSIに3ポートずつ（VLAN ID 100 に、1,2,3番ポート）マップした。
+
 1. 設定の保存
 
 			(config)# save
@@ -168,6 +171,7 @@ VSI id は1,2,・・・,16、VLAN id は前述の16個、dpid　は、0000000000
 
 を実行して作成される`/.rvm/gems/ruby-2.2.5/gems/trema-0.9.0/lib/trema/controller.rb `を
 `IaaS-nist/trema`配下にある[controller.rb](https://github.com/handai-trema/IaaS-nist/tree/master/trema/controller.rb) に変更する。
+
 1. telnet 実行
 
 			$ telnet 192.168.1.1

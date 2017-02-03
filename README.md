@@ -29,14 +29,14 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 以下の事項を、実機スイッチに対して一度実行する。
 1. Tera Term の起動
 1. 以下のシリアルポートで接続
-　   * 通信速度: 9600bps
-    * データ長: 8bit
-    * パリティビット: なし
-    * ストップビット: 1bit
-    * フロー制御: なし
+    - 通信速度: 9600bps
+    - データ長: 8bit
+    - パリティビット: なし
+    - ストップビット: 1bit
+    - フロー制御: なし
 1. ログイン
-　   * username : operator
-　   * password : <none>
+- username : operator
+- password : <none>
 1. コンフィグレーションコマンドモードで実行
 ```
 　> enable

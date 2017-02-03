@@ -15,6 +15,7 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 [](./img/enshu_final.pdf)
 
 ## 成果物の説明
+
 * Controller のソースコード
     * Controller 操作に関するモジュールは主に /lib/ に配置
 　　　　* /trema/ に統計情報取得のために改変したファイル（[controller.rb](https://github.com/handai-trema/IaaS-nist/tree/master/trema/controller.rb))を配置
@@ -27,16 +28,18 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 ### 初期設定
 設定用端末ととPF5240のコンソールポートをRS232Cケーブルで接続し、
 以下の事項を、実機スイッチに対して一度実行する。
+
 1. Tera Term の起動
+
 1. 以下のシリアルポートで接続
-    - 通信速度: 9600bps
-    - データ長: 8bit
-    - パリティビット: なし
-    - ストップビット: 1bit
-    - フロー制御: なし
+    * 通信速度: 9600bps
+    * データ長: 8bit
+    * パリティビット: なし
+    * ストップビット: 1bit
+    * フロー制御: なし
 1. ログイン
-- username : operator
-- password : <none>
+    * username : operator
+    * password : <none>
 1. コンフィグレーションコマンドモードで実行
 ```
 　> enable
@@ -69,10 +72,12 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 ```
 (config)# save
 ```
+
 ### 設定用端末の設定
 設定用端末とコントローラは同一のマシンである。
+
 1. 物理接続
-設定用端末とPF5240のマネジメントポートをLANケーブルで接続
+	設定用端末とPF5240のマネジメントポートをLANケーブルで接続
 1. 設定用端末で Virtualbox を起動。
 1. ID:ensyuu2 / Password:ensyuu2 でログイン。
 1. Controller に IP アドレスを設定
@@ -116,18 +121,14 @@ dpid　は、0000000000000001,0000000000000002,・・・,0000000000000016の16�
 ```
 (config-of)# openflow-vlan <VLAN id>
 ```
-
 を実行する際に、
-
 ```
 !(config-of)# openflow-vlan 100
 openflow : Can't set because the OpenFlow instance is enabled.
 ```
-
 というエラーが出現する場合は、
 既に VSI (OpenFlow スイッチのインスタンス) が
 enable 状態になっているため、設定変更できないという旨のエラーであるため、
-
 ```
 (config-of)# no enable
 (config-of)# openflow-vlan <VLAN id>
@@ -158,6 +159,7 @@ enable 状態になっているため、設定変更できないという旨の�
 ### 実機スイッチの接続
 1番ポートと11番ポートが繋がるように、ケーブルを接続する。
 ### Controllerの使い方
+
 1. 物理ネットワークの接続 （デフォルトスライス[default.sh](https://github.com/handai-trema/IaaS-nist/tree/master/default.sh)の設定を変更すれば以下は自由でよい）
 　　　　* マネージメントポートにコントローラを接続
 　　　　* 11番ポートにVMマネージャーを接続
@@ -201,6 +203,7 @@ $ sh ./output/server.sh
 
 
 ### ユーザーのWebインターフェースの使い方
+
 1. スイッチの1番ポートに接続
 1. IP,MACアドレスの設定
     * IPアドレス：192.168.1.6
@@ -211,6 +214,7 @@ $ sh ./output/server.sh
 
 
 ### VMマネージャーの設定
+
 1. スイッチの11番ポートに接続
 1. IP,MACアドレスの設定
     * IPアドレス：192.168.1.100

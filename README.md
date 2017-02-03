@@ -104,6 +104,7 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 
 			(config)# vlan <VLAN id>
 			(config-vlan)# exit
+
 	VLAN id　の値は、100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600を入力した。
 
 1. インスタンス作成
@@ -162,12 +163,12 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 1. ID:ensyuu2 / Password:ensyuu2 でログイン
 1. GitHub から Controller のファイル一式を Clone し、 master ブランチへ移動
 1. スイッチ接続用ネットワークへの接続
-1. 既存のtremaのファイルの変更  
-統計情報取得のためにハンドラを設定したファイルに変更する。
+1. 既存のtremaのファイルの変更
+	統計情報取得のためにハンドラを設定したファイルに変更する。
 
 			$ bundle install --binstubs
 
-を実行して作成される`/.rvm/gems/ruby-2.2.5/gems/trema-0.9.0/lib/trema/controller.rb `を
+	を実行して作成される`/.rvm/gems/ruby-2.2.5/gems/trema-0.9.0/lib/trema/controller.rb `を
 `IaaS-nist/trema`配下にある[controller.rb](https://github.com/handai-trema/IaaS-nist/tree/master/trema/controller.rb) に変更する。
 
 1. telnet 実行

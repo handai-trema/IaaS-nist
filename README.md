@@ -11,8 +11,9 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 
 
 
-## 紹介用PPTXファイル
-[](./img/enshu_final.pdf)
+## 発表用PPTXファイル
+発表用PPTXファイルは[こちら](./img/enshu_final_ver3.pptx)  
+レポートは[こちら](./img/enshu_final_report.pptx)
 
 ## 成果物の説明
 

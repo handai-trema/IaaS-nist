@@ -23,7 +23,8 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 * WEBインターフェース
 	* 
 * VMマネージャー
-	* 
+	* Webインターフェースから受け取ったイベントを元に起動するシェルスクリプトの作成
+	* /WebInterface/IaaS-system に（[create.sh](https://github.com/handai-trema/IaaS-nist/tree/master/WebInterface/iaas-system/create.sh),[stop.sh](https://github.com/handai-trema/IaaS-nist/tree/master/WebInterface/iaas-system/stop.sh),[connect.sh](https://github.com/handai-trema/IaaS-nist/tree/master/WebInterface/iaas-system/connect.sh))を配置
 
 ## 実機スイッチのセットアップ
 ### 初期設定
@@ -215,8 +216,14 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 1. IP,MACアドレスの設定
     * IPアドレス：192.168.1.100
     * MACアドレス：08:00:27:74:6d:e1
-1. 
- 
+1. Dockerが利用できるPCならば利用可能
+1. /WebInterface/iaas-systemにて以下のコマンドを実行することでHTTPサーバが立ち上がる
+```
+	$ node VMmanager.js
+```
+1. 'http://(HTTPサーバを立ち上げた端末のIP):8174'でWebページにアクセス可能
+1. あとはイベントに基づいたスクリプトが起動することでコンテナの管理が可能
+
  
 ### 使用例
 

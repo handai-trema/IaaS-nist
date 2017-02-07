@@ -206,8 +206,8 @@ OpenFlow（Trema）によって、統計情報が取得されており、
     * IPアドレス：192.168.1.6
     * MACアドレス：08:00:27:74:6d:e2
 1. Webページへアクセス
-	* ユーザのPCからWebブラウザで以下のURLを入力すると、IaaSログインページヘアクセスできる。
-		* 'http://(HTTPサーバを立ち上げた端末のIP):8174'
+	* ユーザのPCからWebブラウザで以下のURLを入力すると、IaaSログインページヘアクセスできる。  
+	'http://(HTTPサーバを立ち上げた端末のIP):8174'
 	
 
 ### VMマネージャーの使い方
@@ -218,40 +218,31 @@ OpenFlow（Trema）によって、統計情報が取得されており、
     * MACアドレス：08:00:27:74:6d:e1
 1. Dockerが利用できるPCならば利用可能
 1. /WebInterface/iaas-systemにて以下のコマンドを実行することでHTTPサーバが立ち上がる
-<<<<<<< HEAD
-```
-	$ node VMmanager.js
-```
-1. 'http://(HTTPサーバを立ち上げた端末のIP):8174'でWebページにアクセス可能
-1. あとはイベントに基づいたスクリプトが起動することでコンテナの管理が可能
 
- 
-=======
-
-```
-	$ node VMmanager.js
-```
+			$ node VMmanager.js
 
 1. 'http://(HTTPサーバを立ち上げた端末のIP):8174'でWebページにアクセス可能
+
 1. あとはイベントに基づいたスクリプトが起動することでコンテナの管理が可能
 
 
 
 ### 使用例
 
-1. ブラウザから'http://(HTTPサーバを立ち上げた端末のIP):8174'へアクセス
+1. ブラウザから'http://(HTTPサーバを立ち上げた端末のIP):8174'へアクセス  
 ![](img/report1.png)
 
-2. 'Payment Plan'で料金プランを選択し、'Create your VMs'でVMを作成
+2. 'Payment Plan'で料金プランを選択し、'Create your VMs'でVMを作成  
 ![](img/report2.png)
 
-3. 'Your VMs'に表示されたアドレスにアクセス
+3. 'Your VMs'に表示されたアドレスにアクセス  
 ![](img/report3.png)
 
-4. 別のIPをもつ端末から3.のアドレスにアクセス
+4. 別のIPをもつ端末から3.のアドレスにアクセス  
 	* アクセス不可
-5. 4.のIPから'http://(HTTPサーバを立ち上げた端末のIP):8174'にアクセスし、'Connect others' Web pages'で、VM名を入力
-6. HTTPサーバを起動しているターミナルにて、アクセスを許可
+5. 4.のIPから'http://(HTTPサーバを立ち上げた端末のIP):8174'にアクセスし、'Connect others' Web pages'で、VM名を入力  
+
+6. HTTPサーバを起動しているターミナルにて、アクセスを許可  
 
 7. 再度、4.での操作と同様にアクセス
 ![](img/report3.png)

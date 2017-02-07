@@ -251,5 +251,6 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 	* アクセス不可
 5. 4.のIPから'http://(HTTPサーバを立ち上げた端末のIP):8174'にアクセスし、'Connect others' Web pages'で、VM名を入力
 6. HTTPサーバを起動しているターミナルにて、アクセスを許可
+
 7. 再度、4.での操作と同様にアクセス
 ![](img/report3.png)

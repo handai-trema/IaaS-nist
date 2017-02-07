@@ -225,24 +225,18 @@ OpenFlow（Trema）によって、統計情報が取得されており、
 
 1. あとはイベントに基づいたスクリプトが起動することでコンテナの管理が可能
 
-
-
 ### 使用例
 
 1. ブラウザから'http://(HTTPサーバを立ち上げた端末のIP):8174'へアクセス  
-![](img/report1.png)
+![](img/report1.png)  
+1. 'Payment Plan'で料金プランを選択し、'Create your VMs'でVMを作成  
+![](img/report2.png)  
+1. 'Your VMs'に表示されたアドレスにアクセス  
+![](img/report3.png)  
+1. 別のIPをもつ端末から3.のアドレスにアクセス  
+	* アクセス不可  
+1. 4.のIPから'http://(HTTPサーバを立ち上げた端末のIP):8174'にアクセスし、'Connect others' Web pages'で、VM名を入力  
+1. HTTPサーバを起動しているターミナルにて、アクセスを許可  
+1. 再度、4.での操作と同様にアクセス
+![](img/report3.png)  
 
-2. 'Payment Plan'で料金プランを選択し、'Create your VMs'でVMを作成  
-![](img/report2.png)
-
-3. 'Your VMs'に表示されたアドレスにアクセス  
-![](img/report3.png)
-
-4. 別のIPをもつ端末から3.のアドレスにアクセス  
-	* アクセス不可
-5. 4.のIPから'http://(HTTPサーバを立ち上げた端末のIP):8174'にアクセスし、'Connect others' Web pages'で、VM名を入力  
-
-6. HTTPサーバを起動しているターミナルにて、アクセスを許可  
-
-7. 再度、4.での操作と同様にアクセス
-![](img/report3.png)
